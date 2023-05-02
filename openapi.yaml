@@ -1,0 +1,436 @@
+openapi: 3.0.3
+
+info:
+  title: BarraCafeApi
+  version: 1.0.0
+  description: REST API do Web App barra cafe
+  
+paths:
+  /produtos:
+    get:
+      operationId: getProdutos
+      summary: Consulta produtos
+      tags:
+        - Produtos
+      parameters:
+        - schema:
+            type: integer
+            example: 1
+          name: id
+          description: 'Id do produto'
+          in: query
+          required: false
+      description: Retorna todos os produtos cadastrados
+      responses: 
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProdutoDetail'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+              
+    post:
+      operationId: postProdutos
+      summary: Cadastra um novo produto
+      tags:
+        - Produtos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProdutoInput'
+      responses:
+        '201':
+          description: Produto criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProdutoDetail'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /produtos/{id}:
+    parameters:
+      - schema:
+          type: integer
+          example: 1
+        name: id
+        description: 'Id do produto'
+        in: path
+        required: true
+    get:
+      operationId: getProdutoById
+      summary: Consulta um produto por id
+      tags:
+        - Produtos
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProdutoDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      operationId: updateProduto
+      summary: Atualiza um produto
+      tags: 
+        - Produtos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProdutoInput'
+      responses:
+        '204':
+          description: 'Produto atualizado'
+        '400':
+          $ref: '#/components/responses/BadRequest'    
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      operationId: removeProduto
+      summary: Remove um produto
+      tags:
+        - Produtos
+      responses:
+        '204':
+          description: 'Produto removido'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /pedidos:
+    get:
+      operationId: getPedidos
+      summary: Consulta pedidos
+      tags:
+        - Pedidos
+      parameters:
+        - schema:
+            type: integer
+            example: 1
+          name: id
+          description: 'Id do pedido'
+          in: query
+          required: false
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PedidosDetail'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      operationId: postPedidos
+      summary: Cadastra um novo pedido
+      tags:
+        - Pedidos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PedidoInput'
+      responses:
+        '201':
+          description: Pedido criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PedidosDetail'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /pedidos/{id}:
+    parameters:
+      - schema:
+          type: integer
+          example: 1
+        name: id
+        description: 'Id do pedido'
+        in: path
+        required: true
+    get:
+      operationId: getPedidoById
+      summary: Consulta pedido por id
+      tags:
+        - Pedidos
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PedidosDetail'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      operationId: removePedidoById
+      summary: Remove pedido por id
+      tags:
+        - Pedidos
+      responses:
+        '204':
+          description: Pedido removido
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /clientes:
+    get:
+      operationId: getClientes
+      summary: Consulta todos os clientes
+      tags:
+        - Clientes
+      responses:
+        '200':
+          description: Retorna todos os clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientesDetail'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      
+tags:
+  - name: Produtos
+    description: Produtos
+  - name: Pedidos
+    description: Pedidos
+  - name: Clientes
+    description: Clientes
+  
+components:
+  responses:
+    NotFound:
+      description: 'Recurso não encontrado'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                format: int32
+                example: 404
+              error:
+                type: string
+                example: 'Dados inválidos'
+              message:
+                type: string
+                example: 'Recurso não encontrado'
+              path:
+                type: string
+                example: '/path'
+            
+    BadRequest:
+      description: 'Requisição inválida'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                format: int32
+                example: 400
+              error:
+                type: string
+                example: 'Dados inválidos'
+              message:
+                type: string
+                example: 'Um ou mais campos estão inválidos'
+              path:
+                type: string
+                example: '/path'
+    InternalServerError:
+      description: 'Erro interno no servidor'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                format: int32
+                example: 500
+              error:
+                type: string
+                example: 'Erro interno no servidor'
+              message:
+                type: string
+                example: 'Estamos com problemas no servidor'
+              path:
+                type: string
+                example: '/path'
+  schemas:
+    ProdutoDetail:
+      description: 'Produto detalhado'
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nome:
+          type: string
+          example: "Rua da Ponte"
+        descricao: 
+          type: string
+          example: "Um hamburguer tradicional"
+        preco: 
+          type: number
+          example: 8
+        imagem_link: 
+          type: string
+          example: "http://minhaimg.com"
+        categoria:
+          type: string
+          example: 'lanche'
+    ProdutoInput:
+      description: 'Modelo para criação ou alteração de um produto'
+      type: object
+      required:
+        - nome
+        - descricao
+        - preco
+        - imagem_link
+        - categoria
+      properties:
+        id:
+          type: integer
+          example: 1
+        nome:
+          type: string
+          example: "Rua da Ponte"
+        descricao: 
+          type: string
+          example: "Um hamburguer tradicional"
+        preco: 
+          type: number
+          example: 8
+        imagem_link: 
+          type: string
+          example: "http://minhaimg.com"
+        categoria:
+          type: string
+          example: 'lanche'
+    PedidosDetail:
+      description: 'Modelo de pedido'
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        data:
+          type: string
+          example: '2023-23-04'
+        total:
+          type: number
+          example: 35
+        observacao:
+          type: string
+          example: 'Haburguer sem salada'
+        status:
+          type: boolean
+          example: false
+        cliente:
+          type: object
+        produtos:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 2
+                quantidade:
+                  type: integer
+                  example: 4
+    PedidoInput:
+      description: 'Modelo para criação ou alteração de um pedido'
+      type: object
+      required:
+        - data
+        - total
+        - cliente
+        - produtos
+      properties:
+        data:
+          type: string
+          example: '2023-23-04'
+        total:
+          type: number
+          example: 35
+        observacao:
+          type: string
+          example: 'Haburguer sem salada'
+        clienteId:
+          type: integer
+          example: 1
+        produtos:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 2
+                quantidade:
+                  type: integer
+                  example: 4
+    ClientesDetail:
+      description: 'Modelo de cliente'
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nome:
+          type: string
+          example: 'Alex'
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
