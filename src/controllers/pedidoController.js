@@ -5,7 +5,7 @@ const { Pedido, Cliente, Produto } = models;
 class PedidoController {
   async index(req, res) {
     try {
-      const pedidos = await Pedido.findAll();
+      const pedidos = await Pedido.findAll({ include: { model: Cliente, as: 'cliente' } });
 
       return res.status(200).json(pedidos);
     } catch (err) {
