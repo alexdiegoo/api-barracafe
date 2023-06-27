@@ -4,11 +4,23 @@ const { Pedido, Cliente, Produto } = models;
 
 class PedidoController {
   async index(req, res) {
+    const { status } = req.query;
     try {
-      const pedidos = await Pedido.findAll({ include: { model: Cliente, as: 'cliente' } });
+      let pedidos;
+
+      if (status) {
+        pedidos = await Pedido.findAll({
+          include: { model: Cliente, as: 'cliente' },
+          where: { status },
+        });
+      } else {
+        pedidos = await Pedido.findAll({ include: { model: Cliente, as: 'cliente' } });
+      }
 
       return res.status(200).json(pedidos);
     } catch (err) {
+      console.log(err);
+
       return res.status(500).json({
         status: 500,
         error: 'Erro interno no servidor',
