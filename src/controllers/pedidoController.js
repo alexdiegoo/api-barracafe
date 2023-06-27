@@ -59,6 +59,43 @@ class PedidoController {
       });
     }
   }
+
+  async update(req, res) {
+    const { id } = req.params;
+    const { status } = req.body;
+    console.log(status);
+    try {
+      if (!status) {
+        return res.status(400).json({
+          status: 400,
+          error: 'Dados inválidos',
+          message: 'Status inválido',
+          path: `/pedidos/${id}`,
+        });
+      }
+
+      const pedido = await Pedido.update({ status }, { where: { id } });
+      console.log(pedido);
+      if (pedido[0] === 0) {
+        return res.status(404).json({
+          status: 404,
+          error: 'Id do pedido inválido ou não existe',
+          message: 'Recurso não encontrado',
+          path: `/pedidos/${id}`,
+        });
+      }
+
+      return res.status(204).json();
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        status: 500,
+        error: 'Erro interno no servidor',
+        message: 'Estamos com problemas no servidor',
+        path: `/pedidos/${id}`,
+      });
+    }
+  }
 }
 
 module.exports = new PedidoController();
