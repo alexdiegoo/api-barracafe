@@ -70,6 +70,47 @@ class ProdutoController {
       });
     }
   }
+
+  async update(req, res) {
+    const { id } = req.params;
+
+    try {
+      const {
+        nome, imagem_link, descricao, preco, categoria,
+      } = req.body;
+
+      if (!nome && !imagem_link && !descricao && !preco && !categoria) {
+        return res.status(400).json({
+          status: 400,
+          error: 'Dados inválidos',
+          message: 'Um ou mais campos estão inválidos',
+          path: `/produtos/${id}`,
+        });
+      }
+
+      const produto = await Produto.update(req.body, {
+        where: { id },
+      });
+
+      if (produto[0] === 0) {
+        return res.status(404).json({
+          status: 404,
+          error: 'Id do produto inválido ou não existe',
+          message: 'Recurso não encontrado',
+          path: `/produtos/${id}`,
+        });
+      }
+
+      return res.status(204).json();
+    } catch (err) {
+      return res.status(500).json({
+        status: 500,
+        error: 'Erro interno no servidor',
+        message: 'Estamos com problemas no servidor',
+        path: `/produtos/${id}`,
+      });
+    }
+  }
 }
 
 module.exports = new ProdutoController();
