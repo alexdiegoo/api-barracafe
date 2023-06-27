@@ -2,6 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 const produto = require('./produto');
+const pedido = require('./pedido');
 
 router.get('/', (req, res) => {
   res.status(200).json({
@@ -10,5 +11,6 @@ router.get('/', (req, res) => {
 });
 
 router.use(produto);
+router.use(pedido);
 
 module.exports = router;
