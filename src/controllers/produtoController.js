@@ -111,6 +111,31 @@ class ProdutoController {
       });
     }
   }
+
+  async delete(req, res) {
+    const { id } = req.params;
+    try {
+      const produto = await Produto.destroy({ where: { id } });
+
+      if (produto === 0) {
+        return res.status(404).json({
+          status: 404,
+          error: 'Id do produto inválido ou não existe',
+          message: 'Recurso não encontrado',
+          path: `/produtos/${id}`,
+        });
+      }
+
+      return res.status(204).json();
+    } catch (err) {
+      return res.status(500).json({
+        status: 500,
+        error: 'Erro interno no servidor',
+        message: 'Estamos com problemas no servidor',
+        path: `/produtos/${id}`,
+      });
+    }
+  }
 }
 
 module.exports = new ProdutoController();
