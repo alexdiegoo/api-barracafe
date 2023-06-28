@@ -1,6 +1,8 @@
 const models = require('../db/models');
 
-const { Pedido, Cliente, Produto } = models;
+const {
+  Pedido, Cliente, Produto, ProdutosPedidos,
+} = models;
 
 class PedidoController {
   async index(req, res) {
@@ -93,6 +95,49 @@ class PedidoController {
         error: 'Erro interno no servidor',
         message: 'Estamos com problemas no servidor',
         path: `/pedidos/${id}`,
+      });
+    }
+  }
+
+  async create(req, res) {
+    const {
+      total, observacao, clienteId, produtos,
+    } = req.body;
+
+    try {
+      if (!total && !observacao && !clienteId && !produtos) {
+        return res.status(400).json({
+          status: 400,
+          error: 'Dados inválidos',
+          message: 'Corpo da requisção inválido',
+          path: '/pedidos/',
+        });
+      }
+
+      const pedido = await Pedido.create({
+        data: new Date(),
+        status: 'pendente',
+        observacao,
+        clienteId,
+        total,
+      });
+
+      produtos.forEach(async (produto) => {
+        await ProdutosPedidos.create({
+          produtoId: produto.id,
+          pedidoId: pedido.id,
+          quantidade: produto.quantidade,
+        });
+      });
+
+      return res.status(201).json(pedido);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        status: 500,
+        error: 'Erro interno no servidor',
+        message: 'Estamos com problemas no servidor',
+        path: '/pedidos/',
       });
     }
   }
