@@ -21,8 +21,6 @@ class PedidoController {
 
       return res.status(200).json(pedidos);
     } catch (err) {
-      console.log(err);
-
       return res.status(500).json({
         status: 500,
         error: 'Erro interno no servidor',
@@ -65,7 +63,6 @@ class PedidoController {
   async update(req, res) {
     const { id } = req.params;
     const { status } = req.body;
-    console.log(status);
     try {
       if (!status) {
         return res.status(400).json({
@@ -89,7 +86,6 @@ class PedidoController {
 
       return res.status(204).json();
     } catch (err) {
-      console.log(err);
       return res.status(500).json({
         status: 500,
         error: 'Erro interno no servidor',
